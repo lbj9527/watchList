@@ -18,11 +18,13 @@ load_dotenv(find_dotenv())
 #实例化这个类，创建一个程序对象 app
 app = Flask(__name__)
 #配置变量的名称必须使用大写，写入配置的语句一般会放到扩展类实例化语句之前
-app.config['SQLALCHEMY_DATABASE_URI'] = prefix + os.path.join(app.root_path, 'data.db')
+#app.config['SQLALCHEMY_DATABASE_URI'] = prefix + os.path.join(app.root_path, 'data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False          # 关闭对模型修改的监控
-app.config['SECRET_KEY'] = 'dev'   #flash() 函数在内部会把消息存储到 Flask 提供的 session 对象里。session 用来在请求间存储数据，
+#app.config['SECRET_KEY'] = 'dev'   #flash() 函数在内部会把消息存储到 Flask 提供的 session 对象里。session 用来在请求间存储数据，
                                    #它会把数据签名后存储到浏览器的 Cookie 中，所以我们需要设置签名所需的密钥
                                    #这个密钥的值在开发时可以随便设置。基于安全的考虑，在部署时应该设置为随机字符，且不应该明文写在代码里， 在部署章节会详细介绍
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
+app.config['SQLALCHEMY_DATABASE_URI'] = prefix + os.path.join(os.path.dirname(app.root_path), os.getenv('DATABASE_FILE', 'data.db'))
 
 db = SQLAlchemy(app)  #初始化扩展，传入程序实例
 
